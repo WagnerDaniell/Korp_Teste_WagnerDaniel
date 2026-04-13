@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ProdutoService } from '../../core/services/produto.service';
-import { Produto } from '../../core/models/produto.model';
+import { Produto, UpdateProdutoDto, CreateProdutoDto } from '../../core/models/produto.model';
 import { ProdutoTableComponent } from './produto-table/produto-table.component';
 import { ProdutoModalComponent } from './produto-modal/produto-modal.component';
 import { SidebarComponent } from '../../shared/components/sidebar.component';
@@ -77,16 +77,24 @@ export class ProdutosComponent implements OnInit {
     const ed = this.editando();
 
     if (ed) {
-      this.service.atualizar(ed.id, { descricao: this.form.value.descricao! }).subscribe({
+
+      const dto: UpdateProdutoDto = { 
+        NovaDescricao: this.form.value.descricao! 
+      };
+
+      this.service.atualizar(ed.id, dto).subscribe({
         next:  () => { this.salvando.set(false); this.fecharModal(); this.carregar(); },
         error: e  => { this.salvando.set(false); this.erroModal.set(e.mensagem); }
       });
     } else {
-      this.service.criar({
+
+      const dto: CreateProdutoDto = {
         codigo:    this.form.getRawValue().codigo!,
         descricao: this.form.value.descricao!,
         saldo:     this.form.getRawValue().saldo!,
-      }).subscribe({
+      };
+
+      this.service.criar(dto).subscribe({
         next:  () => { this.salvando.set(false); this.fecharModal(); this.carregar(); },
         error: e  => { this.salvando.set(false); this.erroModal.set(e.mensagem); }
       });

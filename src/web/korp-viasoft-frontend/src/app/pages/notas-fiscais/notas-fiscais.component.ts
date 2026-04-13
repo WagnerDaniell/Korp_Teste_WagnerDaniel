@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { NotaFiscalService } from '../../core/services/nota-fiscal.service';
 import { ProdutoService } from '../../core/services/produto.service';
-import { NotaFiscal } from '../../core/models/nota-fiscal.model';
+import { NotaFiscal, CreateNotaFiscalDto, ImprimirNotaDto } from '../../core/models/nota-fiscal.model';
 import { Produto } from '../../core/models/produto.model';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
@@ -81,11 +81,15 @@ export class NotasFiscaisComponent implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.salvando.set(true);
     this.erroModal.set('');
-    const itens = this.itensArr.value.map((i: any) => ({
-      codigoProduto: i.codigoProduto,
-      quantidade:    i.quantidade,
-    }));
-    this.notaService.criar({ itens }).subscribe({
+
+    const dto: CreateNotaFiscalDto = {
+      itens: this.itensArr.value.map((i: any) => ({
+        codigoProduto: i.codigoProduto,
+        quantidade:    i.quantidade,
+      }))
+    };
+
+    this.notaService.criar(dto).subscribe({
       next:  () => { this.salvando.set(false); this.fecharModal(); this.carregar(); },
       error: e  => { this.salvando.set(false); this.erroModal.set(e.mensagem); }
     });
@@ -95,9 +99,11 @@ export class NotasFiscaisComponent implements OnInit {
     this.imprimindoId.set(nota.id);
     this.erro.set('');
 
-    const idUnicoParaIdempotencia = uuidv4();
+    const dto: ImprimirNotaDto = {
+      impressaoId: uuidv4() 
+    };
 
-    this.notaService.imprimir(nota.id, { impressaoId: idUnicoParaIdempotencia }).subscribe({
+    this.notaService.imprimir(nota.id, dto).subscribe({
       next:  () => { this.imprimindoId.set(null); this.feedbackOk.set(true); this.carregar(); },
       error: e  => { this.imprimindoId.set(null); this.erro.set(e.mensagem); }
     });

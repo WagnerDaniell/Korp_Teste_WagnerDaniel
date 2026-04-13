@@ -13,5 +13,5 @@ export interface CreateProdutoDto {
 }
 
 export interface UpdateProdutoDto {
-  descricao: string;
+  NovaDescricao: string;
 }
