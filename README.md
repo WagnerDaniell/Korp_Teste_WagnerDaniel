@@ -17,6 +17,28 @@ De forma simples, você consegue:
 
 ---
 
+### 🔑 Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto baseado no exemplo abaixo para que os serviços consigam se comunicar:
+
+```env
+# Configurações do Banco de Dados
+DB_USER=admin
+DB_PASSWORD=senhaaqui
+DB_HOST=db-postgres
+DB_PORT=5432
+
+# Configurações das apis
+DB_APIUSER=apiuser
+DB_APIPASSWORD=senhaaqui
+ASPNETCORE_ENV=Development
+
+# Senha para comunicação interna das apis
+INTERNAL_SHARED_SECRET=senhaaqui
+```
+
+---
+
 ### 🐳 Como rodar o projeto?
 
 Para facilitar a sua vida, o projeto está totalmente "containerizado". Isso significa que você não precisa instalar bancos de dados ou configurar linguagens na sua máquina. Você só precisa ter o **Docker** instalado.
