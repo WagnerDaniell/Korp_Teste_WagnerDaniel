@@ -8,7 +8,7 @@ namespace Korp.Faturamento.Domain.Entities
 
         public Guid Id { get; private set; }
         public Guid NotaFiscalId { get; private set; }
-        public string CodigoProduto { get; private set; }
+        public string CodigoProduto { get; private set; } //Add pelo banco a FK do NotaFiscalId
         public int Quantidade { get; private set; }
 
         public ItemNotaFiscal(Guid id, string codigoProduto, int quantidade)

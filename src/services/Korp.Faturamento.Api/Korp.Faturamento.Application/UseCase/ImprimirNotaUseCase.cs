@@ -1,6 +1,7 @@
 ﻿using Korp.Faturamento.Application.DTOs.Request;
 using Korp.Faturamento.Application.DTOs.Response;
 using Korp.Faturamento.Application.Services;
+using Korp.Faturamento.Domain.Entities;
 using Korp.Faturamento.Domain.Exceptions;
 using Korp.Faturamento.Domain.Repositories;
 
@@ -25,37 +26,25 @@ public class ImprimirNotaUseCase
             ?? throw new NotFoundException($"Nota fiscal {id} não encontrada.");
 
         if (nota.JaProcessada(impressaoId))
-            return new NotaFiscalResponse(
-                nota.Id,
-                nota.Numero,
-                nota.Status.ToString(),
-                nota.CreatedAt,
-                nota.Itens.Select(i => new ItemNotaResponse(
-                    i.Id,
-                    i.CodigoProduto,
-                    i.Quantidade
-                )).ToList()
-            );
-
-        nota.Fechar(impressaoId);
+            return MapearParaResponse(nota);
 
         var baixas = nota.Itens
             .Select(i => new BaixaEstoqueRequest(i.CodigoProduto, i.Quantidade))
             .ToList();
 
         await _estoqueService.BaixarEstoqueAsync(baixas);
+
+        nota.Fechar(impressaoId);
         await _notaRepository.UpdateAsync(nota);
 
-        return new NotaFiscalResponse(
-            nota.Id,
-            nota.Numero,
-            nota.Status.ToString(),
-            nota.CreatedAt,
-            nota.Itens.Select(i => new ItemNotaResponse(
-                i.Id,
-                i.CodigoProduto,
-                i.Quantidade
-            )).ToList()
-        );
+        return MapearParaResponse(nota);
     }
+
+    private NotaFiscalResponse MapearParaResponse(NotaFiscal nota) => new NotaFiscalResponse(
+        nota.Id,
+        nota.Numero,
+        nota.Status.ToString(),
+        nota.CreatedAt,
+        nota.Itens.Select(i => new ItemNotaResponse(i.Id, i.CodigoProduto, i.Quantidade)).ToList()
+    );
 }
