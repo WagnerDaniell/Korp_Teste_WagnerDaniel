@@ -29,7 +29,7 @@ public class CreateProdutoUseCase
 
         var isExisting = await _produtoRepository.GetByCodigoAsync(request.Codigo);
         if (isExisting != null)
-            throw new ValidationException(new List<string> { "Produto já existe." });
+            throw new ConflictException("Produto já existe.");
 
         var produto = new Produto(
             Uuid.NewDatabaseFriendly(Database.PostgreSql),
