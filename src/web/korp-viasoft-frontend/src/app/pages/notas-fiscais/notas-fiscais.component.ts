@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NotaFiscalService } from '../../core/services/nota-fiscal.service';
 import { ProdutoService } from '../../core/services/produto.service';
 import { NotaFiscal } from '../../core/models/nota-fiscal.model';
@@ -15,7 +14,7 @@ import { SidebarComponent } from '../../shared/components/sidebar.component';
 @Component({
   selector: 'app-notas-fiscais',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, NotaTableComponent, NotaModalComponent, SidebarComponent],
+  imports: [ReactiveFormsModule, NotaTableComponent, NotaModalComponent, SidebarComponent],
   templateUrl: './notas-fiscais.component.html',
   styleUrl: './notas-fiscais.component.css',
 })

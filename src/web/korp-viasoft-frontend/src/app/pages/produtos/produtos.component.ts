@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ProdutoService } from '../../core/services/produto.service';
 import { Produto } from '../../core/models/produto.model';
 import { ProdutoTableComponent } from './produto-table/produto-table.component';
@@ -10,7 +9,7 @@ import { SidebarComponent } from '../../shared/components/sidebar.component';
 @Component({
   selector: 'app-produtos',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, ProdutoTableComponent, ProdutoModalComponent, SidebarComponent ],
+  imports: [ReactiveFormsModule, ProdutoTableComponent, ProdutoModalComponent, SidebarComponent ],
   templateUrl: './produtos.component.html',
   styleUrl: './produtos.component.css',
 })
