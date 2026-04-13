@@ -1,0 +1,19 @@
+# Segredos
+.env
+*.env
+
+# .NET (Arquivos de compilação)
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Frontend (Angular)
+node_modules/
+dist/
+.angular/
+
+# Logs e temporários
+*.log
+.DS_Store

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Korp.Faturamento.Api/Korp.Faturamento.Api.csproj" />
+  <Project Path="Korp.Faturamento.Application/Korp.Faturamento.Application.csproj" Id="b939aaad-5ccd-42b3-b79f-355d01736f88" />
+  <Project Path="Korp.Faturamento.Domain/Korp.Faturamento.Domain.csproj" Id="94ec7b52-7aa5-4786-8d13-fda76951c2c8" />
+  <Project Path="Korp.Faturamento.Infrastructure/Korp.Faturamento.Infrastructure.csproj" Id="be1b1a58-9af9-4a78-90fb-3d0c44494194" />
+</Solution>

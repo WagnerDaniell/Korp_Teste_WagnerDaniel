@@ -1,0 +1,50 @@
+/* ── SIDEBAR ──────────────────────────────── */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 50;
+  border-right: 1px solid var(--sidebar-border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 22px 22px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.brand-mark { font-size: 20px; color: var(--accent); }
+.brand-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 17px;
+  color: var(--sidebar-txt);
+  letter-spacing: 0.4px;
+}
+.brand-text b { color: var(--accent); }
+.nav { display: flex; flex-direction: column; padding: 18px 10px; gap: 3px; flex: 1; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border-radius: 8px;
+  color: var(--sidebar-muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background 0.13s, color 0.13s;
+}
+.nav-link:hover { background: var(--sidebar-hover); color: var(--sidebar-txt); }
+.nav-link.active { background: var(--accent); color: #fff; }
+.nav-ico { font-size: 15px; width: 17px; text-align: center; }
+.sidebar-footer {
+  padding: 14px 22px;
+  font-size: 11px;
+  color: var(--sidebar-muted);
+  border-top: 1px solid var(--sidebar-border);
+  letter-spacing: 0.3px;
+}

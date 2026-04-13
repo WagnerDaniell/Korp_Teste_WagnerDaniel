@@ -1,0 +1,75 @@
+<div class="shell">
+
+  <app-sidebar></app-sidebar>
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Produtos</h1>
+        <p class="page-sub">Controle de estoque e saldos</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCriar()">+ Novo Produto</button>
+    </div>
+
+    @if (erro()) {
+      <div class="alert alert-error">⚠ {{ erro() }}</div>
+    }
+
+    <div class="card">
+      @if (carregando()) {
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <span>Carregando produtos...</span>
+        </div>
+      } @else if (produtos().length === 0) {
+        } @else {
+        <app-produto-table 
+          [produtos]="produtos()" 
+          [removendoId]="removendoId()"
+          (onEdit)="abrirEditar($event)"
+          (onDelete)="confirmarRemover($event)" />
+      }
+    </div>
+  </main>
+</div>
+
+<!-- MODAL CRIAR/EDITAR -->
+@if (modalAberto()) {
+  <app-produto-modal 
+    [form]="form" 
+    [editando]="editando()" 
+    [salvando]="salvando()"
+    [erroModal]="erroModal()"
+    (onClose)="fecharModal()"
+    (onSave)="salvar()" />
+}
+
+<!-- MODAL CONFIRMAR REMOÇÃO -->
+@if (modalRemocao()) {
+  <div class="overlay" (click)="fecharRemocao()">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <span class="modal-title">Remover produto</span>
+        <button class="close-btn" (click)="fecharRemocao()">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-text">
+          Tem certeza que deseja remover
+          <strong>{{ produtoParaRemover()?.descricao }}</strong>?
+          Esta ação não pode ser desfeitfa.
+        </p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="fecharRemocao()">Cancelar</button>
+        <button class="btn btn-danger" (click)="remover()" [disabled]="!!removendoId()">
+          @if (removendoId()) {
+            <span class="spin-btn"></span> Removendo...
+          } @else {
+            Remover
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

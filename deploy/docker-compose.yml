@@ -1,0 +1,84 @@
+services:
+  db-postgres:
+    image: postgres:16-alpine
+    container_name: korp-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: korp-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+
+  estoque-api:
+    build: 
+      context: ../src/services/Korp.Estoque.Api
+      dockerfile: Korp.Estoque.Api/Dockerfile
+    container_name: estoque-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENV}
+      InternalSettings__CommunicationSecret: ${INTERNAL_SHARED_SECRET}
+      ConnectionStrings__DefaultConnection: Host=db-postgres;Database=db_estoque;Username=${DB_APIUSER};Password=${DB_APIPASSWORD}
+    ports:
+      - "5001:8080"
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+
+  faturamento-api:
+    build:
+      context: ../src/services/Korp.Faturamento.Api
+      dockerfile: Korp.Faturamento.Api/Dockerfile
+    container_name: faturamento-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENV}
+      InternalSettings__CommunicationSecret: ${INTERNAL_SHARED_SECRET}
+      ConnectionStrings__DefaultConnection: Host=db-postgres;Database=db_faturamento;Username=${DB_APIUSER};Password=${DB_APIPASSWORD}
+      ServiceUrls__EstoqueApi: http://estoque-api:8080 #Dns interno
+    ports:
+      - "5002:8080"
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+
+  frontend:
+    build: 
+      context: ../src/web/korp-viasoft-frontend
+      dockerfile: Dockerfile
+    container_name: angular-app
+    ports:
+      - "4200:4200"
+
+  database-migrator:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    volumes:
+      - ../src:/src
+      #Gambiarra
+      #- /src/services/Korp.Estoque.Api/Korp.Estoque.Api/obj/
+      #- /src/services/Korp.Estoque.Api/Korp.Estoque.Infrastructure/obj/
+      #- /src/services/Korp.Faturamento.Api/Korp.Faturamento.Api/obj/
+      #- /src/services/Korp.Faturamento.Api/Korp.Faturamento.Infrastructure/obj/
+      - ./migrate.sh:/migrate.sh
+    environment:
+      - CONN_ESTOQUE=Host=db-postgres;Database=db_estoque;Username=${DB_USER};Password=${DB_PASSWORD}
+      - CONN_FATURAMENTO=Host=db-postgres;Database=db_faturamento;Username=${DB_USER};Password=${DB_PASSWORD}
+    command: bash -c "chmod +x /migrate.sh && /migrate.sh"
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+volumes:
+  postgres-data:

@@ -1,0 +1,54 @@
+<div class="overlay" (click)="onClose.emit()">
+  <div class="modal modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <span class="modal-title">Nova Nota Fiscal</span>
+      <button class="close-btn" (click)="onClose.emit()">×</button>
+    </div>
+    <form [formGroup]="form()" (ngSubmit)="onSave.emit()">
+      <div class="modal-body">
+        @if (erroModal()) {
+          <div class="alert alert-error">⚠ {{ erroModal() }}</div>
+        }
+        <div class="itens-header">
+          <label class="section-label">Itens da nota</label>
+          <button type="button" class="btn btn-ghost btn-sm" (click)="onAddItem.emit()">+ Item</button>
+        </div>
+        <div formArrayName="itens">
+          @for (ctrl of itensArr.controls; track $index) {
+            <div [formGroupName]="$index" class="item-row">
+              <div class="field" style="flex:1;">
+                <label>Produto</label>
+                @if (carregandoProdutos()) {
+                  <select disabled><option>Carregando...</option></select>
+                } @else {
+                  <select formControlName="codigoProduto"
+                    [class.invalid]="ctrl.get('codigoProduto')?.invalid && ctrl.get('codigoProduto')?.touched">
+                    <option value="">Selecione...</option>
+                    @for (p of produtos(); track p.id) {
+                      <option [value]="p.codigo">
+                        {{ p.codigo }} — {{ p.descricao }} (saldo: {{ p.saldo }})
+                      </option>
+                    }
+                  </select>
+                }
+              </div>
+              <div class="field qtd-field">
+                <label>Qtd.</label>
+                <input type="number" formControlName="quantidade" min="1" />
+              </div>
+              @if (itensArr.length > 1) {
+                <button type="button" class="icon-btn danger remove-btn" (click)="onRemoveItem.emit($index)">✕</button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" (click)="onClose.emit()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando() || form().invalid">
+          {{ salvando() ? 'Criando...' : 'Criar nota fiscal' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

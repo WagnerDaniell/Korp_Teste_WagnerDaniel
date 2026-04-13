@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Korp.Estoque.Api/Korp.Estoque.Api.csproj" />
+  <Project Path="Korp.Estoque.Application/Korp.Estoque.Application.csproj" Id="33f50447-6764-4d31-948d-66b0f11115db" />
+  <Project Path="Korp.Estoque.Domain/Korp.Estoque.Domain.csproj" Id="4fb39606-5d4a-47b4-a47b-fcf44c8afe3f" />
+  <Project Path="Korp.Estoque.Infrastructure/Korp.Estoque.Infrastructure.csproj" Id="efae9b32-5510-4ae7-817c-2f9533a790f0" />
+</Solution>

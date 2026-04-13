@@ -1,0 +1,70 @@
+<div class="shell">
+  <app-sidebar></app-sidebar>
+
+  <main class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Notas Fiscais</h1>
+        <p class="page-sub">Gestão e emissão de notas</p>
+      </div>
+      <button class="btn btn-primary" (click)="abrirCriar()">+ Nova Nota</button>
+    </div>
+
+    @if (erro()) {
+      <div class="alert alert-error">⚠ {{ erro() }}</div>
+    }
+
+    <div class="card">
+      @if (carregando()) {
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <span>Carregando notas fiscais...</span>
+        </div>
+      } @else if (notas().length === 0) {
+        <div class="empty-state">
+          <span class="empty-ico">◻</span>
+          <span>Nenhuma nota fiscal emitida</span>
+          <button class="btn btn-primary btn-sm" (click)="abrirCriar()">Criar primeira nota</button>
+        </div>
+      } @else {
+        <app-nota-table 
+          [notas]="notas()"
+          [detalheId]="detalheId()"
+          [notaDetalhe]="notaDetalhe()"
+          [carregandoDetalhe]="carregandoDetalhe()"
+          [imprimindoId]="imprimindoId()"
+          (onToggleDetalhe)="toggleDetalhe($event)"
+          (onFecharDetalhe)="fecharDetalhe()"
+          (onImprimir)="imprimir($event)" />
+      }
+    </div>
+  </main>
+</div>
+
+@if (modalAberto()) {
+  <app-nota-modal 
+    [form]="form"
+    [produtos]="produtos()"
+    [salvando]="salvando()"
+    [carregandoProdutos]="carregandoProdutos()"
+    [erroModal]="erroModal()"
+    (onClose)="fecharModal()"
+    (onSave)="criar()"
+    (onAddItem)="addItem()"
+    (onRemoveItem)="removeItem($event)" />
+}
+
+@if (feedbackOk()) {
+  <div class="overlay" (click)="fecharFeedback()">
+    <div class="modal modal-ok" (click)="$event.stopPropagation()">
+      <div class="modal-body ok-body">
+        <div class="ok-icon">✓</div>
+        <p class="ok-title">Nota impressa!</p>
+        <p class="ok-sub">O estoque foi atualizado e a nota foi fechada com sucesso.</p>
+      </div>
+      <div class="modal-foot" style="justify-content:center; border-top:none; padding-top:0;">
+        <button class="btn btn-primary" (click)="fecharFeedback()">OK</button>
+      </div>
+    </div>
+  </div>
+}

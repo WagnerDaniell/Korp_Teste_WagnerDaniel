@@ -1,0 +1,87 @@
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nº</th>
+        <th>Status</th>
+        <th>Itens</th>
+        <th>Criada em</th>
+        <th class="col-actions">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (nota of notas(); track nota.id) {
+        <tr>
+          <td><span class="chip">#{{ nota.numero }}</span></td>
+          <td>
+            <span class="badge" [class]="statusBadge(nota.status)">
+              {{ nota.status === 'Aberta' ? '● Aberta' : '○ Fechada' }}
+            </span>
+          </td>
+          <td class="td-muted">
+            {{ nota.itens.length }} {{ nota.itens.length === 1 ? 'item' : 'itens' }}
+          </td>
+          <td class="td-muted">{{ fmtData(nota.createdAt) }}</td>
+          <td class="col-actions">
+            <div class="actions">
+              <button class="icon-btn"
+                [class.active]="detalheId() === nota.id"
+                title="Ver itens"
+                (click)="onToggleDetalhe.emit(nota)">◉</button>
+
+              @if (nota.status === 'Aberta') {
+                <button class="btn btn-print btn-sm"
+                  [disabled]="imprimindoId() === nota.id"
+                  (click)="onImprimir.emit(nota)">
+                  @if (imprimindoId() === nota.id) {
+                    <span class="spin-btn"></span> Imprimindo...
+                  } @else {
+                    ⎙ Imprimir
+                  }
+                </button>
+              } @else {
+                <span class="badge-closed">Impressa</span>
+              }
+            </div>
+          </td>
+        </tr>
+
+        @if (detalheId() === nota.id) {
+          <tr class="detalhe-row">
+            <td colspan="5">
+              <div class="detalhe-wrap">
+                <div class="detalhe-head">
+                  <span>Itens da Nota <b>#{{ nota.numero }}</b></span>
+                  <button class="icon-btn" (click)="onFecharDetalhe.emit()">×</button>
+                </div>
+                @if (carregandoDetalhe()) {
+                  <div class="detalhe-loading">
+                    <div class="spinner" style="width:16px;height:16px;border-width:2px;"></div>
+                    Carregando...
+                  </div>
+                } @else if (notaDetalhe()) {
+                  <table class="inner-table">
+                    <thead>
+                      <tr>
+                        <th>Código do Produto</th>
+                        <th>Quantidade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of notaDetalhe()!.itens; track item.id) {
+                        <tr>
+                          <td><span class="chip">{{ item.codigoProduto }}</span></td>
+                          <td>{{ item.quantidade }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>
