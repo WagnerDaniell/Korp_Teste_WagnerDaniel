@@ -67,11 +67,6 @@ services:
     image: mcr.microsoft.com/dotnet/sdk:8.0
     volumes:
       - ../src:/src
-      #Gambiarra
-      #- /src/services/Korp.Estoque.Api/Korp.Estoque.Api/obj/
-      #- /src/services/Korp.Estoque.Api/Korp.Estoque.Infrastructure/obj/
-      #- /src/services/Korp.Faturamento.Api/Korp.Faturamento.Api/obj/
-      #- /src/services/Korp.Faturamento.Api/Korp.Faturamento.Infrastructure/obj/
       - ./migrate.sh:/migrate.sh
     environment:
       - CONN_ESTOQUE=Host=db-postgres;Database=db_estoque;Username=${DB_USER};Password=${DB_PASSWORD}
