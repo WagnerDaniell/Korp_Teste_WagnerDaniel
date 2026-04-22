@@ -21,24 +21,32 @@ public class ImprimirNotaUseCase
     }
 
     public async Task<NotaFiscalResponse> Execute(Guid id, Guid impressaoId)
+{
+    var nota = await _notaRepository.GetByIdAsync(id)
+        ?? throw new NotFoundException($"Nota fiscal {id} não encontrada.");
+
+    if (nota.JaProcessada(impressaoId))
+        return MapearParaResponse(nota);
+
+    try
     {
-        var nota = await _notaRepository.GetByIdAsync(id)
-            ?? throw new NotFoundException($"Nota fiscal {id} não encontrada.");
-
-        if (nota.JaProcessada(impressaoId))
-            return MapearParaResponse(nota);
-
-        var baixas = nota.Itens
-            .Select(i => new BaixaEstoqueRequest(i.CodigoProduto, i.Quantidade))
-            .ToList();
-
-        await _estoqueService.BaixarEstoqueAsync(baixas);
-
         nota.Fechar(impressaoId);
         await _notaRepository.UpdateAsync(nota);
-
+    }
+    catch (Exception)
+    {
+        //conflito/idempotência
         return MapearParaResponse(nota);
     }
+
+    var baixas = nota.Itens
+        .Select(i => new BaixaEstoqueRequest(i.CodigoProduto, i.Quantidade))
+        .ToList();
+
+    await _estoqueService.BaixarEstoqueAsync(baixas);
+
+    return MapearParaResponse(nota);
+}
 
     private NotaFiscalResponse MapearParaResponse(NotaFiscal nota) => new NotaFiscalResponse(
         nota.Id,

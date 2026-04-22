@@ -32,7 +32,8 @@ public class FaturamentoDbContext : DbContext
                 .HasConversion<string>()
                 .HasMaxLength(20);
 
-            entity.Property(e => e.ImpressaoId);
+            entity.HasIndex(e => e.ImpressaoId)
+                .IsUnique();
 
             entity.Property(e => e.CreatedAt)
                 .IsRequired()
